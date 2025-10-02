@@ -11,7 +11,7 @@ const Login = () => {
     const [loading, setLoading] = React.useState(false);
     const navigate = useNavigate();
     
-    const {Login} = useAuth();
+    const {login} = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,9 +22,9 @@ const Login = () => {
         try {
             const response = await axios.post('http://localhost:3000/api/auth/login', {email, password});
 
-            if (response.data.status) {
-                await Login(response.data.user, response.data.token);
-                if (response.data.user.role === 'admin') {
+            if (response.data.success) {
+                await login(response.data.user, response.data.token);
+                if (response.data.user.role === "admin") {
                     navigate('/admin/dashboard');
                 }else {
                     navigate('/customer/dashboard');
