@@ -44,6 +44,8 @@ const Categories = () => {
         );
         if (response.data.success) {
             setEditCategory(null);
+            setCategoryName('');
+            setCategoryDescription('');
             alert('Category eddited successfully!');
             fetchCategories();
         } else {
@@ -74,16 +76,8 @@ const Categories = () => {
             alert('Error adding category. This category already exist.');
         }
     }catch (error) {
-    if (error.response) {
-        alert(`Erro: ${error.response.data.message || error.response.statusText}`);
-        console.error('Server error:', error.response);
-    } else if (error.request) {
-        alert('Server error. Verify the backend.');
-        console.error('No response:', error.request);
-    } else {
-        alert('Error.');
-        console.error('Erro:', error.message);
-    }
+        console.error('Error adding category:', error);
+        alert('Error adding category. Please try again later.');
 }
 }
     }
@@ -99,6 +93,32 @@ const handleCancel = async () => {
     setCategoryName('');
     setCategoryDescription('');
 }
+
+const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this category?");
+    if (confirmDelete) {
+        try {
+            const response = await axios.delete(
+                `http://localhost:3000/api/category/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('pos-token')}`,
+                    },
+                }
+            );
+            if (response.data.success) {
+                alert('Category deleted successfully!');
+                fetchCategories();
+            } else {
+                console.error('Error deleting category:', response.data);
+                alert('Error deleting category.');
+            }
+}   catch (error) { 
+        console.error('Error deleting category:', error);
+        alert('Error deleting category. Please try again later.');
+    }
+        }
+    }
 
 if (loading) return <div>Loading...</div>;
 
@@ -169,7 +189,10 @@ if (loading) return <div>Loading...</div>;
                                         className='bg-blue-800 text-white p-2 rounded-md hover:bg-blue-900 cursor-pointer mr-2'
                                         onClick={() => handleEdit(category)}
                                         >Edit</button>
-                                        <button className='bg-red-800 text-white p-2 rounded-md hover:bg-red-900 cursor-pointer'>Delete</button>
+                                        <button 
+                                        className='bg-red-800 text-white p-2 rounded-md hover:bg-red-900 cursor-pointer'
+                                        onClick={() => handleDelete(category._id)}
+                                        >Delete</button>
                                     </td>
                                 </tr>
                             ))}
