@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 
-
 const Categories = () => {
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [editCategory, setEditCategory] = useState(null);
 
     const fetchCategories = async () => {
             setLoading(true);
@@ -32,6 +32,28 @@ const Categories = () => {
 
     const handleSubmit = async (e) => {
     e.preventDefault();
+    if(editCategory) {
+         const response = await axios.put(
+            `http://localhost:3000/api/category/${editCategory}`,
+            { categoryName, categoryDescription },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('pos-token')}`,
+                },
+            }
+        );
+        if (response.data.success) {
+            setEditCategory(null);
+            alert('Category eddited successfully!');
+            fetchCategories();
+        } else {
+            console.error('Error edditing category:', response.data);
+            alert('Error adding category. This category already exist.');
+        }
+    } else {
+
+    
+
     try {
         const response = await axios.post(
             'http://localhost:3000/api/category/add',
@@ -63,7 +85,20 @@ const Categories = () => {
         console.error('Erro:', error.message);
     }
 }
-};
+}
+    }
+
+const handleEdit = async (category) => {
+    setEditCategory(category._id);
+    setCategoryName(category.categoryName);
+    setCategoryDescription(category.categoryDescription);
+}
+
+const handleCancel = async () => {
+    setEditCategory(null);
+    setCategoryName('');
+    setCategoryDescription('');
+}
 
 if (loading) return <div>Loading...</div>;
 
@@ -74,7 +109,7 @@ if (loading) return <div>Loading...</div>;
         <div className='flex flex-col lg:flex-row gap-4'>
             <div className='lg:w-1/3'>
                 <div className='bg-gray-600 p-4 rounded-lg shadow-mb'>
-                    <h2 className='text-center text-xl font-bold mb-4 text-white'>Add Category</h2>
+                    <h2 className='text-center text-xl font-bold mb-4 text-white'>{editCategory ? 'Edit Category' : 'Add category'}</h2>
                     <form 
                     className='space-y-4'
                     onSubmit={handleSubmit}
@@ -83,6 +118,7 @@ if (loading) return <div>Loading...</div>;
                             <input 
                             type="text" 
                             placeholder='Category Name'
+                            value={categoryName}
                             className='border w-full p-2 rounded-md text-white'
                             onChange={(e) => setCategoryName(e.target.value)}
                             />
@@ -92,13 +128,22 @@ if (loading) return <div>Loading...</div>;
                             type="text" 
                             placeholder='Category Description'
                             className='border w-full p-2 rounded-md text-white'
+                            value={categoryDescription}
                             onChange={(e) => setCategoryDescription(e.target.value)}
                             />
                         </div>
-                        <button 
+                        <div className='flex space-x-2'>
+                            <button 
                         type='submit'
-                        className='w-full rounded-md bg-cyan-600 font-bold text-white p-3 cursor-pointer hover:bg-cyan-700 transition duration-200'
-                        >Add Category</button>
+                        className='w-full rounded-md bg-cyan-600 font-bold text-white p-3 cursor-pointer hover:bg-cyan-700 transition duration-200 mt-2'
+                        >{editCategory ? 'Save Changes' : 'Add Category'}</button>
+                        { editCategory && (
+                            <button 
+                            className='w-full rounded-md bg-gray-700 font-bold text-white p-3 cursor-pointer hover:bg-gray-800 transition duration-200 mt-2' 
+                            onClick={handleCancel}
+                            >Cancel</button>
+                        )}
+                        </div>
                     </form>
                 </div>
             </div>
@@ -120,7 +165,10 @@ if (loading) return <div>Loading...</div>;
                                     <td className='bg-white border border-gray-600 p-2 text-xl'>{index + 1}</td>
                                     <td className='bg-white border border-gray-600 p-2 text-xl'>{category.categoryName}</td>
                                     <td className='bg-white border border-gray-600 p-2 text-xl'>
-                                        <button className='bg-blue-800 text-white p-2 rounded-md hover:bg-blue-900 cursor-pointer mr-2'>Edit</button>
+                                        <button 
+                                        className='bg-blue-800 text-white p-2 rounded-md hover:bg-blue-900 cursor-pointer mr-2'
+                                        onClick={() => handleEdit(category)}
+                                        >Edit</button>
                                         <button className='bg-red-800 text-white p-2 rounded-md hover:bg-red-900 cursor-pointer'>Delete</button>
                                     </td>
                                 </tr>
