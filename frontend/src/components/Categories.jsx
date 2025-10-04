@@ -186,11 +186,11 @@ if (loading) return <div>Loading...</div>;
                                     <td className='bg-white border border-gray-600 p-2 text-xl'>{category.categoryName}</td>
                                     <td className='bg-white border border-gray-600 p-2 text-xl'>
                                         <button 
-                                        className='bg-blue-800 text-white p-2 rounded-md hover:bg-blue-900 cursor-pointer mr-2'
+                                        className='bg-blue-800 text-white p-2 rounded-md hover:bg-blue-900 duration-200 cursor-pointer mr-2'
                                         onClick={() => handleEdit(category)}
                                         >Edit</button>
                                         <button 
-                                        className='bg-red-800 text-white p-2 rounded-md hover:bg-red-900 cursor-pointer'
+                                        className='bg-red-800 text-white p-2 rounded-md hover:bg-red-900 duration-200 cursor-pointer'
                                         onClick={() => handleDelete(category._id)}
                                         >Delete</button>
                                     </td>
