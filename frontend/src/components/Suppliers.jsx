@@ -172,7 +172,7 @@ const Suppliers = () => {
                                         >Edit</button>
                                         <button 
                                         className='bg-red-800 text-white p-2 rounded-md hover:bg-red-900 duration-200 cursor-pointer'
-                                        onClick={() => handleDelete(category._id)}
+                                        // onClick={() => handleDelete(category._id)}
                                         >Delete</button>
                         </td>
                         
